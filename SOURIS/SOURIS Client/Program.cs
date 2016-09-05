@@ -71,7 +71,7 @@ namespace SOURIS_Client
             if (Seconds > 30)
             {
                 TimeSpan time = TimeSpan.FromSeconds(Seconds);
-                string str = time.ToString(@"hh\:mm\:ss\:fff");
+                string str = time.ToString(@"hh\:mm\:ss\");
                 return str;
             }
             else

