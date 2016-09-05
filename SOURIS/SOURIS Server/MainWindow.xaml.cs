@@ -20,6 +20,16 @@ using System.Windows.Threading;
 
 namespace SOURIS_Server
 {
+    public class Slave
+    {
+        public string Name { get; set; }
+        public string Country { get; set; }
+        public string Ping { get; set; }
+        public string CPU { get; set; }
+        public string RAM { get; set; }
+        public string Activity { get; set; }
+        public string Front { get; set; }
+    }
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
     /// </summary>
@@ -40,7 +50,7 @@ namespace SOURIS_Server
     }
     public partial class MainWindow : MetroWindow
     {
-
+        public List<Slave> Slavelist = new List<Slave>();
         // Thread signal.
         public static ManualResetEvent allDone = new ManualResetEvent(false);
         public void StartListening()
@@ -136,6 +146,17 @@ namespace SOURIS_Server
             InitializeComponent();
             var CheckerStart = Task.Factory.StartNew(() => { StartListening(); });
             addlistbox(" >> Server Started");
+            listView1.ItemsSource = Slavelist;
+            Slavelist.Add(new Slave() { Name = "Test/Desktop", Country = "France", Ping = "88 ms", CPU = "70%", RAM = "20%", Activity = "Idle : 01:20:12", Front = "Cs:go" });
+            listView1.Items.Refresh();
+        }
+        private void MenuItemDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (listView1.SelectedIndex == -1)
+            {
+                return;
+            }
+            //Delete Func
         }
     }
 }

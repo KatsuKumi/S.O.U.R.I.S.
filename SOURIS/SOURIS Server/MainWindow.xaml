@@ -6,9 +6,43 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SOURIS_Server"
         mc:Ignorable="d"
-        Title="MainWindow" Height="775" Width="1481">
+        Title="MainWindow" Height="793" Width="1481" Background="#FF181818">
     <Grid>
-        <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="724" Margin="1179,10,0,0" VerticalAlignment="Top" Width="284"/>
-
+        <TabControl Margin="0,10,0,-10">
+            <TabItem Header="News" Height="39" VerticalAlignment="Top">
+            </TabItem>
+            <TabItem Header="Clients" >
+                <ListView x:Name="listView1" HorizontalAlignment="Left" Height="688" Margin="10,10,0,0" VerticalAlignment="Top" Width="956">
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Delete" Click="MenuItemDelete_Click"/>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name" Width="150" DisplayMemberBinding="{Binding Name}" />
+                            <GridViewColumn Header="Country" Width="150" DisplayMemberBinding="{Binding Country}" />
+                            <GridViewColumn Header="Ping" Width="100" DisplayMemberBinding="{Binding Ping}" />
+                            <GridViewColumn Header="CPU Usage" Width="100" DisplayMemberBinding="{Binding CPU}" />
+                            <GridViewColumn Header="RAM Usage" Width="100" DisplayMemberBinding="{Binding RAM}" />
+                            <GridViewColumn Header="Activity" Width="100" DisplayMemberBinding="{Binding Activity}" />
+                            <GridViewColumn Header="Front Window" Width="250" DisplayMemberBinding="{Binding Front}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </TabItem>
+            <TabItem Header="Settings" >
+            </TabItem>
+            <Label x:Name="label1" Content="Label" Height="100" Width="100"/>
+        </TabControl>
+        <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="697" Margin="1179,55,0,0" VerticalAlignment="Top" Width="284">
+        </ListBox>
+        <Label x:Name="Label" Content="General Logs" HorizontalAlignment="Left" Margin="1260,10,0,0" VerticalAlignment="Top" Width="136" Height="45" Foreground="White" FontSize="22" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
     </Grid>
+    <Window.Resources>
+        <ResourceDictionary>
+            <SolidColorBrush x:Key="BackgroundKey" Color="#FF181818" />
+        </ResourceDictionary>
+    </Window.Resources>
+
 </Controls:MetroWindow>
