@@ -22,7 +22,6 @@ namespace SOURIS_Client
             //---send the text---
             Console.WriteLine("Sending : " + message);
             nwStream.Write(bytesToSend, 0, bytesToSend.Length);
-
             //---read back the text---
             byte[] bytesToRead = new byte[client.ReceiveBufferSize];
             int bytesRead = nwStream.Read(bytesToRead, 0, client.ReceiveBufferSize);
