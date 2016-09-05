@@ -7,7 +7,7 @@ namespace SOURIS_Client
 {
     class Program
     {
-        public static string server_host = "90.60.70.205";
+        public static string server_host = "62.210.152.119";
         public static int server_port = 8888;
         public static string message = "test swagg";
 
@@ -34,7 +34,7 @@ namespace SOURIS_Client
             byte[] bytes = Encoding.ASCII.GetBytes(message);
             stream.Write(bytes, 0, bytes.Length);
             stream.Flush();
-            byte[] array = new byte[500000];
+            byte[] array = new byte[2048];
             stream.Read(array, 0, tcpClient.ReceiveBufferSize);
             string @string = Encoding.ASCII.GetString(array);
             tcpClient.Close();
