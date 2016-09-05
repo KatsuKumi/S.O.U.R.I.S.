@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Test1
+namespace S.O.U.R.I.S.Server
 {
     /// <summary>
     /// Logique d'interaction pour MainWindow.xaml
