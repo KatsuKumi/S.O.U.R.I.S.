@@ -13,12 +13,10 @@ namespace SOURIS_Client
 
         static void Main(string[] args)
         {
-
             //---create a TCPClient object at the IP and port no.---
             TcpClient client = new TcpClient(server_host, server_port);
             NetworkStream nwStream = client.GetStream();
             byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(message);
-
             //---send the text---
             Console.WriteLine("Sending : " + message);
             nwStream.Write(bytesToSend, 0, bytesToSend.Length);
