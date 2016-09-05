@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace S.O.U.R.I.S
 {
@@ -10,6 +11,7 @@ namespace S.O.U.R.I.S
     {
         static void Main(string[] args)
         {
+            MessageBox.Show("WOWOWOWOWOWWOWOWOWOOWW");
         }
     }
 }
