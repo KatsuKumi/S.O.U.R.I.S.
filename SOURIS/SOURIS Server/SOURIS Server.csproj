@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MahApps.Metro">
+      <HintPath>..\..\..\..\..\Documents\Visual Studio 2015\Projects\WpfApplication1\WpfApplication1\bin\Release\MahApps.Metro.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -49,6 +52,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFToolkit.Extended">
+      <HintPath>D:\new save\Agarder\Visual Studio 2015\Projects\UnityInjector2-master\MemorySharp-1.1.0-binaries\Extended WPF Toolkit Binaries\fr\Extended WPF Toolkit Binaries\WPFToolkit.Extended.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -94,6 +100,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
