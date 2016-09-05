@@ -10,6 +10,7 @@ namespace S.O.U.R.I.S.Client
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("b i t e j'ai pas d'idée lel");
             Console.WriteLine("bite");
         }
     }
