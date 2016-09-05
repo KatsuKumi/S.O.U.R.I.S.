@@ -13,31 +13,22 @@ namespace SOURIS_Client
 
         static void Main(string[] args)
         {
-            bool is_ok = false;
-            NetworkStream stream;
-            TcpClient tcpClient = new TcpClient();
 
-            Console.WriteLine("[ ] En attente du server.");
-            while (!is_ok)
-            {
-                try
-                {
-                    tcpClient.Connect(server_host, server_port);
-                    is_ok = true;
-                }
-                catch (SocketException e) { }
-                Thread.Sleep(10);
-            }
-            Console.WriteLine("[ ] Je suis maintenant connecté.");
+            //---create a TCPClient object at the IP and port no.---
+            TcpClient client = new TcpClient(server_host, server_port);
+            NetworkStream nwStream = client.GetStream();
+            byte[] bytesToSend = ASCIIEncoding.ASCII.GetBytes(message);
 
-            stream = tcpClient.GetStream();
-            byte[] bytes = Encoding.ASCII.GetBytes(message);
-            stream.Write(bytes, 0, bytes.Length);
-            stream.Flush();
-            byte[] array = new byte[2048];
-            stream.Read(array, 0, tcpClient.ReceiveBufferSize);
-            string @string = Encoding.ASCII.GetString(array);
-            tcpClient.Close();
+            //---send the text---
+            Console.WriteLine("Sending : " + message);
+            nwStream.Write(bytesToSend, 0, bytesToSend.Length);
+
+            //---read back the text---
+            byte[] bytesToRead = new byte[client.ReceiveBufferSize];
+            int bytesRead = nwStream.Read(bytesToRead, 0, client.ReceiveBufferSize);
+            Console.WriteLine("Received : " + Encoding.ASCII.GetString(bytesToRead, 0, bytesRead));
+            Console.ReadLine();
+            client.Close();
         }
     }
 }

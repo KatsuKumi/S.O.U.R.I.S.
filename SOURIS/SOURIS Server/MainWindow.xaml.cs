@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,47 +26,40 @@ namespace SOURIS_Server
         public MainWindow()
         {
             InitializeComponent();
-            var CheckerStart = Task.Factory.StartNew(() => { Tpcserver(); });
+            var CheckerStart = Task.Factory.StartNew(() => { StartListening(); });
         }
-        public void Tpcserver()
+
+        const int PORT_NO = 8888;
+        public TcpListener listener = new TcpListener(PORT_NO);
+        public void StartListening()
         {
-
-            TcpListener serverSocket = new TcpListener(8888);
-            int requestCount = 0;
-            TcpClient clientSocket = default(TcpClient);
-            serverSocket.Start();
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>  listBox.Items.Add(" >> Server Started")));
-            clientSocket = serverSocket.AcceptTcpClient();
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => listBox.Items.Add(" >> Accept connection from client")));
-            
-            requestCount = 0;
-
-            while ((true))
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => listBox.Items.Add(" >> Server Started")));
+            while (true)
             {
-                try
-                {
-                    requestCount = requestCount + 1;
-                    NetworkStream networkStream = clientSocket.GetStream();
-                    byte[] bytesFrom = new byte[clientSocket.ReceiveBufferSize];
-                    networkStream.Read(bytesFrom, 0, (int)clientSocket.ReceiveBufferSize);
-                    string dataFromClient = System.Text.Encoding.ASCII.GetString(bytesFrom);
-                    dataFromClient = dataFromClient.Substring(0, dataFromClient.IndexOf("$"));
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>listBox.Items.Add(" >> Data from client - " + dataFromClient)));
-                    string serverResponse = "Last Message from client" + dataFromClient;
-                    Byte[] sendBytes = Encoding.ASCII.GetBytes(serverResponse);
-                    networkStream.Write(sendBytes, 0, sendBytes.Length);
-                    networkStream.Flush();
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => listBox.Items.Add(" >> " + serverResponse)));
-                }
-                catch (Exception ex)
-                {
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => listBox.Items.Add(ex.ToString())));
-                }
+                //---listen at the specified IP and port no.---
+                listener.Start();
+                //---incoming client connected---
+                var CheckerStart = Task.Factory.StartNew(() => { listenstream(listener.AcceptTcpClient()); });
             }
-            clientSocket.Close();
-            serverSocket.Stop();
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => listBox.Items.Add(" >> exit")));
-            Console.ReadLine();
+        }
+        public void listenstream(TcpClient client)
+        {
+            NetworkStream nwStream = client.GetStream();
+            byte[] buffer = new byte[client.ReceiveBufferSize];
+
+            //---read incoming stream---
+            int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
+
+            //---convert the data received into a string---
+            string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => listBox.Items.Add("Received : " + dataReceived)));
+
+            //---write back the text to the client---
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => listBox.Items.Add("Sending back : " + dataReceived)));
+            nwStream.Write(buffer, 0, bytesRead);
+            client.Close();
+            listener.Stop();
         }
     }
 }
