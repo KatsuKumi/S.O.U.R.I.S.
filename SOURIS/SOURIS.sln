@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SOURIS Client", "SOURIS Client\SOURIS Client.csproj", "{976067F9-A807-4C5C-9C8E-D23E65851E3A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SOURIS Server", "SOURIS Server\SOURIS Server.csproj", "{9A159527-9727-4BC7-95F4-26E6224B81DF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{976067F9-A807-4C5C-9C8E-D23E65851E3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{976067F9-A807-4C5C-9C8E-D23E65851E3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{976067F9-A807-4C5C-9C8E-D23E65851E3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{976067F9-A807-4C5C-9C8E-D23E65851E3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A159527-9727-4BC7-95F4-26E6224B81DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A159527-9727-4BC7-95F4-26E6224B81DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A159527-9727-4BC7-95F4-26E6224B81DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A159527-9727-4BC7-95F4-26E6224B81DF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
