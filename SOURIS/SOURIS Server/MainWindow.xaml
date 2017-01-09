@@ -16,7 +16,7 @@
                     <ListView.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Delete" Click="MenuItemDelete_Click"/>
-                            <MenuItem Header="Screenshot" Click="Screenshot"/>
+                            <MenuItem Header="Screenshot" Click="MenuItemScreenshot_Click"/>
                         </ContextMenu>
                     </ListView.ContextMenu>
                     <ListView.View>
