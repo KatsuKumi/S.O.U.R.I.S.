@@ -41,10 +41,6 @@ namespace SOURIS_Server
         // Received data string.
         public StringBuilder sb = new StringBuilder();
     }
-
-    public class AsynchronousSocketListener
-    {
-    }
     public partial class MainWindow : MetroWindow
     {
         public List<Slave> Slavelist = new List<Slave>();
