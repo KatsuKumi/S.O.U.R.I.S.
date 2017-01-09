@@ -25,7 +25,7 @@ namespace SOURIS_Client
     }
     class Program
     {
-        public static string server_host = "192.168.1.128";
+        public static string server_host = "192.168.1.24";
         public static int server_port = 11000;
         public static string message = "test swagg";
 
