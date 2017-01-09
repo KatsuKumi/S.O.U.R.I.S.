@@ -273,6 +273,7 @@ namespace SOURIS_Client
 
         static void Main(string[] args)
         {
+            Console.WriteLine("Started");
             StartClient();
         }
     }
