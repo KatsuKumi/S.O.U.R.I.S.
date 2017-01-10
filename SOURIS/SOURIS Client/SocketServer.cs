@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Net.Sockets;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Windows;
-using System.Windows.Threading;
+using System.Threading.Tasks;
 
-namespace SOURIS_Server.Sockets
+namespace SOURIS_Client
 {
-    class connect
+    class SocketServer
     {
         //<------------------------------- Déclaration des classes et variables---------------------------------->
         public class StateObject
@@ -31,7 +31,7 @@ namespace SOURIS_Server.Sockets
             byte[] bytes = new Byte[1024];
             IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
             IPAddress ipAddress = ipHostInfo.AddressList[0];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 11000);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 12000);
             Socket listener = new Socket(AddressFamily.InterNetwork,
                 SocketType.Stream, ProtocolType.Tcp);
             try
@@ -41,7 +41,6 @@ namespace SOURIS_Server.Sockets
                 while (true)
                 {
                     allDone.Reset();
-                    Form.FormUpdate.addlistbox("Waiting for a connection...");
                     listener.BeginAccept(
                         new AsyncCallback(AcceptCallback),
                         listener);
@@ -51,7 +50,7 @@ namespace SOURIS_Server.Sockets
             }
             catch (Exception e)
             {
-                Form.FormUpdate.addlistbox(e.ToString());
+                Console.WriteLine(e.ToString());
             }
 
             Console.Read();
@@ -61,6 +60,7 @@ namespace SOURIS_Server.Sockets
         public static void AcceptCallback(IAsyncResult ar)
         {
             allDone.Set();
+            Console.WriteLine("test");
             Socket listener = (Socket)ar.AsyncState;
             Socket handler = listener.EndAccept(ar);
             StateObject state = new StateObject();
@@ -82,17 +82,11 @@ namespace SOURIS_Server.Sockets
                 state.sb.Append(Encoding.ASCII.GetString(
                     state.buffer, 0, bytesRead));
                 content = state.sb.ToString();
-                Form.FormUpdate.addlistbox($"Read {content.Length} bytes from socket. \nData : {content}");
-                int count = 0;
-                if (content.Contains("|"))
-                {
-                    Form.FormUpdate.updateSlave(content);
-                }
+
                 handler.Shutdown(SocketShutdown.Both);
                 handler.Close();
             }
             //<----------------------------------------------------------------->
         }
-
     }
 }

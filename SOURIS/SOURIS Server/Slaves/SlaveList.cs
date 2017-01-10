@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace SOURIS_Server.Slaves
 {
     class SlaveList
     {
-        public static List<Slave> List = new List<Slave>();
+        public static ObservableCollection<Slave> List = new ObservableCollection<Slave>();
         public class Slave
         {
             public string Name { get; set; }
@@ -18,7 +19,7 @@ namespace SOURIS_Server.Slaves
             public string RAM { get; set; }
             public string Activity { get; set; }
             public string Front { get; set; }
-            public string Nextinteract { get; set; }
+            public string IP { get; set; }
         }
     }
 }

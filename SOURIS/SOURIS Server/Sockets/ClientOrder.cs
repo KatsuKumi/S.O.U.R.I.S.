@@ -1,24 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SOURIS_Client
+namespace SOURIS_Server.Sockets
 {
-    class SocketClient
+    class ClientOrder
     {
-        public static string server_host = "192.168.1.24";
-        public static int server_port = 11000;
-
-        private const int port = 11000;
-
-        // ManualResetEvent instances signal completion.
         private static ManualResetEvent connectDone =
             new ManualResetEvent(false);
         private static ManualResetEvent sendDone =
@@ -38,8 +30,8 @@ namespace SOURIS_Client
             // Received data string.
             public StringBuilder sb = new StringBuilder();
         }
-        
-        public static void StartClient(string message)
+
+        public static void StartClient(string message, string ipadress)
         {
             // Connect to a remote device.
             try
@@ -47,9 +39,9 @@ namespace SOURIS_Client
                 // Establish the remote endpoint for the socket.
                 // The name of the 
                 // remote device is "host.contoso.com".
-                IPHostEntry ipHostInfo = Dns.Resolve(server_host);
+                IPHostEntry ipHostInfo = Dns.GetHostEntry(ipadress);
                 IPAddress ipAddress = ipHostInfo.AddressList[0];
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
+                IPEndPoint remoteEP = new IPEndPoint(ipAddress, 12000);
 
                 // Create a TCP/IP socket.
                 Socket client = new Socket(AddressFamily.InterNetwork,

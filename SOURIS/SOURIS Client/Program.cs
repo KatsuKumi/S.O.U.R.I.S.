@@ -17,7 +17,14 @@ namespace SOURIS_Client
     {
         static void Main(string[] args)
         {
-            SocketClient.StartClient();
+            LaunchAllThread();
+            Console.Read();
+        }
+
+        private static void LaunchAllThread()
+        {
+           Task.Factory.StartNew(() => { ThreadLoop.refreshinfo(); });
+           SocketServer.StartListening();
         }
     }
 }
