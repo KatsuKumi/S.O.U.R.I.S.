@@ -7,6 +7,10 @@ using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using System.Drawing.Imaging;
 
 namespace SOURIS_Client
 {
@@ -111,5 +115,26 @@ namespace SOURIS_Client
             return message;
         }
         //<---------------------------------Get Last input----------------------------->
+        public static void Screenshot(string[] args)
+        {
+
+            Bitmap resolution;
+            resolution = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
+            Size size = new Size(resolution.Width, resolution.Height);
+
+
+            Graphics memoryGraphics = Graphics.FromImage(resolution);
+
+            memoryGraphics.CopyFromScreen(0, 0, 0, 0, size);
+
+            string savename = "";
+
+            savename = string.Format(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Screenshot.png");
+
+
+            resolution.Save(savename);
+
+
+        }
     }
 }
