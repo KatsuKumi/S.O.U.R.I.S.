@@ -20,6 +20,7 @@ namespace SOURIS_Server.Slaves
             public string Activity { get; set; }
             public string Front { get; set; }
             public string IP { get; set; }
+            public string NextOrder { get; set; }
         }
     }
 }

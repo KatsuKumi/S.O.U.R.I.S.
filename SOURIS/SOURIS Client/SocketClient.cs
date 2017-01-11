@@ -23,6 +23,8 @@ namespace SOURIS_Client
             new ManualResetEvent(false);
         private static ManualResetEvent sendDone =
             new ManualResetEvent(false);
+        private static ManualResetEvent receiveDone =
+            new ManualResetEvent(false);
 
         // The response from the remote device.
         private static String response = String.Empty;
@@ -47,7 +49,9 @@ namespace SOURIS_Client
                 // Establish the remote endpoint for the socket.
                 // The name of the 
                 // remote device is "host.contoso.com".
+#pragma warning disable CS0618 // Le type ou le membre est obsolète
                 IPHostEntry ipHostInfo = Dns.Resolve(server_host);
+#pragma warning restore CS0618 // Le type ou le membre est obsolète
                 IPAddress ipAddress = ipHostInfo.AddressList[0];
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
 
@@ -63,9 +67,19 @@ namespace SOURIS_Client
                 Send(client, message);
                 sendDone.WaitOne();
 
+                Receive(client);
+                receiveDone.WaitOne();
+                if (!response.Contains("ok"))
+                {
+                    Order.Switchjobs(response);
+                }
+                else
+                {
+                    Console.WriteLine("Response received : {0}", response);
+                }
+
                 Console.WriteLine("Closing socket");
                 // Release the socket.
-                client.Close();
 
             }
             catch (Exception e)
@@ -114,6 +128,63 @@ namespace SOURIS_Client
                 Socket client = (Socket)ar.AsyncState;
 
                 sendDone.Set();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        private static void Receive(Socket client)
+        {
+            try
+            {
+                // Create the state object.
+                StateObject state = new StateObject();
+                state.workSocket = client;
+
+                // Begin receiving the data from the remote device.
+                client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                    new AsyncCallback(ReceiveCallback), state);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        private static void ReceiveCallback(IAsyncResult ar)
+        {
+            try
+            {
+                // Retrieve the state object and the client socket 
+                // from the asynchronous state object.
+                StateObject state = (StateObject)ar.AsyncState;
+                Socket client = state.workSocket;
+
+                // Read data from the remote device.
+                int bytesRead = client.EndReceive(ar);
+
+                if (bytesRead > 0)
+                {
+                    // There might be more data, so store the data received so far.
+                    state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
+
+                    // Get the rest of the data.
+                    client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                        new AsyncCallback(ReceiveCallback), state);
+                }
+                else
+                {
+                    // All the data has arrived; put it in response.
+                    if (state.sb.Length > 1)
+                    {
+                        response = state.sb.ToString();
+                    }
+                    // Signal that all bytes have been received.
+                    receiveDone.Set();
+                    client.Close();
+                }
             }
             catch (Exception e)
             {

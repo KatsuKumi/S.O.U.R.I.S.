@@ -24,7 +24,6 @@ namespace SOURIS_Client
         private static void LaunchAllThread()
         {
            Task.Factory.StartNew(() => { ThreadLoop.refreshinfo(); });
-           SocketServer.StartListening();
         }
     }
 }

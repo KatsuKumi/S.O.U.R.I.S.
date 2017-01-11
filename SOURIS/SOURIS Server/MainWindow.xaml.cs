@@ -27,8 +27,8 @@ namespace SOURIS_Server
         {
             InitializeComponent();
             main = this;
-            var Listenstart = Task.Factory.StartNew(() => {Sockets.connect.StartListening(); });
-            var start = Task.Factory.StartNew(() => { Form.FormUpdate.startingtask(); });
+            var Listenstart = Task.Factory.StartNew(() => {Sockets.SocketServer.StartListening(); });
+            Form.FormUpdate.startingtask();
         }
 
         private void MenuItemDelete_Click(object sender, RoutedEventArgs e)

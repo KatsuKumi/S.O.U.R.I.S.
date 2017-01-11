@@ -13,7 +13,7 @@ namespace SOURIS_Client
             while (true)
             {
                 SocketClient.StartClient(InfoFunc.GetAllInfo());
-                Task.Delay(5000).Wait();
+                Task.Delay(500).Wait();
             }
         }
     }

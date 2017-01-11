@@ -6,10 +6,12 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace SOURIS_Server.Sockets
 {
-    class connect
+    class SocketServer
     {
         //<------------------------------- Déclaration des classes et variables---------------------------------->
         public class StateObject
@@ -25,11 +27,14 @@ namespace SOURIS_Server.Sockets
         }
 
         public static ManualResetEvent allDone = new ManualResetEvent(false);
+        public static bool WaitForInteract = false;
         //<------------------------------- Début du sniffing de packet ---------------------------------->
         public static void StartListening()
         {
             byte[] bytes = new Byte[1024];
+#pragma warning disable CS0618 // Le type ou le membre est obsolète
             IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
+#pragma warning restore CS0618 // Le type ou le membre est obsolète
             IPAddress ipAddress = ipHostInfo.AddressList[0];
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 11000);
             Socket listener = new Socket(AddressFamily.InterNetwork,
@@ -41,17 +46,26 @@ namespace SOURIS_Server.Sockets
                 while (true)
                 {
                     allDone.Reset();
-                    Form.FormUpdate.addlistbox("Waiting for a connection...");
                     listener.BeginAccept(
                         new AsyncCallback(AcceptCallback),
                         listener);
+                    Form.FormUpdate.addlistbox("Waiting for a connection...");
                     allDone.WaitOne();
                 }
 
             }
             catch (Exception e)
             {
-                Form.FormUpdate.addlistbox(e.ToString());
+                if (e.ToString().Contains("0x80004005"))
+                {
+                    Task.Delay(1000).Wait();
+                    Form.FormUpdate.ShowDialog("Server already running !", "Oops, look like the server is already running." + Environment.NewLine + "Or maybe the server port ( 11000 ) is already used." + Environment.NewLine + "The server will not work." );
+                    Form.FormUpdate.addlistbox("Cannot listen for connection, server running or port used.");
+                }
+                else
+                {
+                    Form.FormUpdate.addlistbox(e.ToString());
+                }
             }
 
             Console.Read();
@@ -82,17 +96,43 @@ namespace SOURIS_Server.Sockets
                 state.sb.Append(Encoding.ASCII.GetString(
                     state.buffer, 0, bytesRead));
                 content = state.sb.ToString();
+
                 Form.FormUpdate.addlistbox($"Read {content.Length} bytes from socket. \nData : {content}");
-                int count = 0;
-                if (content.Contains("|"))
+                if (content.Contains("THISISALLINFOFUNC"))
                 {
                     Form.FormUpdate.updateSlave(content);
                 }
+                Send(handler, Slaves.SlaveHelper.GetNextOrder(Slaves.SlaveHelper.GetSlaveID(content)));
+            }
+
+        }
+        //<------------------------ Début de l'envoie de la réponse---------------------------------------->
+        private static void Send(Socket handler, String data)
+        {
+            if (data != "ok")
+            {
+                WaitForInteract = false;
+            }
+            byte[] byteData = Encoding.ASCII.GetBytes(data);
+            handler.BeginSend(byteData, 0, byteData.Length, 0,
+                new AsyncCallback(SendCallback), handler);
+        }
+        //<------------------------ Envoie de la réponse---------------------------------------->
+        private static void SendCallback(IAsyncResult ar)
+        {
+            try
+            {
+                Socket handler = (Socket)ar.AsyncState;
+                int bytesSent = handler.EndSend(ar);
                 handler.Shutdown(SocketShutdown.Both);
                 handler.Close();
-            }
-            //<----------------------------------------------------------------->
-        }
 
+            }
+            catch (Exception)
+            {
+            }
+        }
+        //<----------------------------------------------------------------->
     }
+    
 }

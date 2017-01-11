@@ -12,7 +12,7 @@
             <TabItem Header="News" Height="39" VerticalAlignment="Top">
             </TabItem>
             <TabItem Header="Clients" >
-                <ListView x:Name="listView1" HorizontalAlignment="Left" Height="688" Margin="10,10,0,0" VerticalAlignment="Top" Width="956">
+                <ListView x:Name="listView1" HorizontalAlignment="Left" Height="688" Margin="10,10,0,0" VerticalAlignment="Top" Width="1154">
                     <ListView.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Delete" Click="MenuItemDelete_Click"/>
@@ -22,12 +22,12 @@
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Name" Width="150" DisplayMemberBinding="{Binding Name}" />
-                            <GridViewColumn Header="Country" Width="150" DisplayMemberBinding="{Binding Country}" />
+                            <GridViewColumn Header="Country" Width="100" DisplayMemberBinding="{Binding Country}" />
                             <GridViewColumn Header="Ping" Width="100" DisplayMemberBinding="{Binding Ping}" />
                             <GridViewColumn Header="CPU Usage" Width="100" DisplayMemberBinding="{Binding CPU}" />
                             <GridViewColumn Header="RAM Usage" Width="100" DisplayMemberBinding="{Binding RAM}" />
                             <GridViewColumn Header="Activity" Width="100" DisplayMemberBinding="{Binding Activity}" />
-                            <GridViewColumn Header="Front Window" Width="250" DisplayMemberBinding="{Binding Front}" />
+                            <GridViewColumn Header="Front Window" Width="500" DisplayMemberBinding="{Binding Front}" />
                         </GridView>
                     </ListView.View>
                 </ListView>

