@@ -17,76 +17,20 @@ namespace SOURIS_Server.Sockets
     class TCPServer
     {
         private static Socket sock;
-        private static  int port = 1234;
-        private static  IPAddress addr = IPAddress.Any;
-        public static bool waitingforscreenshot = true;
+        private static IPAddress addr = IPAddress.Any;
+        public static bool waitingforscreenshot = false;
         public static void ListenScreenshot()
         {
-            Listening();
-        }
-        private static void Listening()
-        {
-            sock = new Socket(
-               addr.AddressFamily,
-               SocketType.Stream,
-               ProtocolType.Tcp);
-            sock.Bind(new IPEndPoint(addr, port));
-            sock.Listen(100);
-            sock.BeginAccept(OnConnectRequest, sock);
-        }
-        private static void OnConnectRequest(IAsyncResult result)
-        {
-
-            Socket sock = (Socket)result.AsyncState;
-            waitingforscreenshot = false;
-            Connection newConn = new Connection(sock.EndAccept(result));
+            TcpListener server = new TcpListener(IPAddress.Any, 1234);
+            server.Start();
+            TcpClient client = server.AcceptTcpClient();  
+            NetworkStream ns = client.GetStream();
+            byte[] msg = new byte[200 * 1024];
+            ns.Read(msg, 0, msg.Length);
+            Form.FormUpdate.addlistbox("Test Screenshot : Saving");
+            File.WriteAllBytes("yolo2.png", msg);
+            server.Stop();
         }
 
-    }
-    class Connection
-    {
-        private Socket sock;
-        private Encoding encoding = Encoding.UTF8;
-        public const int BufferSize = 500 * 2048;
-        public byte[] dataRcvBuf = new byte[BufferSize];
-
-        public Connection(Socket s)
-        {
-            this.sock = s;
-            this.BeginReceive();
-        }
-        
-        private void BeginReceive()
-        {
-            sock.BeginReceive(
-                    dataRcvBuf, 0,
-                    dataRcvBuf.Length,
-                    SocketFlags.None,
-                    new AsyncCallback(this.OnBytesReceived),
-                    this);
-        }
-        
-        protected void OnBytesReceived(IAsyncResult result)
-        {
-            try
-            {
-                int nBytesRec = this.sock.EndReceive(result);
-                if (nBytesRec <= 0)
-                {
-                    this.sock.Close();
-                    return;
-                }
-                string strReceived = this.encoding.GetString(
-                    this.dataRcvBuf, 0, nBytesRec);
-
-                File.WriteAllBytes("yolo.png", dataRcvBuf);
-                this.sock.Close();
-            }
-            catch (System.Net.Sockets.SocketException)
-            {
-                this.sock.Close();
-            }
-            TCPServer.waitingforscreenshot = true;
-        }
     }
 }

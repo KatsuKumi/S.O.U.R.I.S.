@@ -13,7 +13,7 @@ namespace SOURIS_Client
 {
     class SocketClient
     {
-        public static string server_host = "192.168.1.24";
+        public static string server_host = "192.168.1.128";
         public static int server_port = 11000;
 
         private const int port = 11000;

@@ -10,6 +10,7 @@
     <Grid>
         <TabControl Margin="0,10,0,-10">
             <TabItem Header="News" Height="39" VerticalAlignment="Top">
+                <Button x:Name="button" Content="TEST" Width="75" Margin="493,442,904,244" Click="button_Click"/>
             </TabItem>
             <TabItem Header="Clients" >
                 <ListView x:Name="listView1" HorizontalAlignment="Left" Height="688" Margin="10,10,0,0" VerticalAlignment="Top" Width="1154">

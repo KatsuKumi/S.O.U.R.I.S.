@@ -12,50 +12,7 @@ namespace SOURIS_Server.Form
 {
     class FormUpdate
     {
-        public static BackgroundWorker Screenshotworker = new BackgroundWorker();
-        public static void initBackGroundWorker()
-        {
-            Screenshotworker.DoWork += Screenshotworker_DoWork;
-        }
 
-        private static async void Screenshotworker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            var controller = await MainWindow.main.ShowProgressAsync("Screenshooting Slave...", "Sending a request to the slave...");
-            while (Sockets.SocketServer.WaitForInteract)
-            {
-                Task.Delay(500).Wait() ;
-            }
-            controller.SetProgress(40);
-            controller.SetMessage("Send done. Waiting for the screenshot...");
-            while (Sockets.TCPServer.waitingforscreenshot)
-            {
-                Task.Delay(500).Wait();
-            }
-            controller.SetProgress(80);
-            controller.SetMessage("Receiving screenshot...");
-            Task.Delay(500).Wait();
-            controller.SetProgress(81);
-            Task.Delay(500).Wait();
-            controller.SetProgress(82);
-            Task.Delay(500).Wait();
-            controller.SetProgress(84);
-            Task.Delay(500).Wait();
-            controller.SetProgress(88);
-            Task.Delay(500).Wait();
-            controller.SetProgress(90);
-            Task.Delay(500).Wait();
-            controller.SetProgress(91);
-            Task.Delay(500).Wait();
-            controller.SetProgress(95);
-            Task.Delay(500).Wait();
-            controller.SetProgress(96);
-            Task.Delay(500).Wait();
-            controller.SetProgress(97);
-            Task.Delay(500).Wait();
-            controller.SetProgress(99);
-            Task.Delay(500).Wait();
-            controller.SetProgress(100);
-        }
 
         public async static void ShowDialog(string title, string message)
         {
@@ -70,7 +27,7 @@ namespace SOURIS_Server.Form
             addlistbox(" >> Server Started");
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => MainWindow.main.listView1.ItemsSource = Slaves.SlaveList.List));
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => MainWindow.main.listView1.Items.Refresh()));
-            initBackGroundWorker();
+
         }
         public static void deleteline()
         {
